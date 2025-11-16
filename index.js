@@ -145,6 +145,43 @@ app.patch('/all-services/:id', async (req, res) => {
 
 
 
+app.delete('/all-services/:id', async (req, res) => {
+  const idParam = req.params.id;
+
+  let filter;
+
+
+  if (ObjectId.isValid(idParam)) {
+    filter = { _id: new ObjectId(idParam) };
+  } 
+
+  else if (!isNaN(idParam)) {
+    filter = { _id: parseInt(idParam) };
+  } 
+  else {
+    return res.status(400).send({ message: "Invalid service ID" });
+  }
+
+  try {
+    const result = await serviceColl.deleteOne(filter);
+
+    if (result.deletedCount === 0) {
+      return res.status(404).send({ message: "Service not found" });
+    }
+
+    res.send({ message: "Service deleted successfully", result });
+
+  } catch (error) {
+    console.error("Delete Error:", error);
+    res.status(500).send({ message: "Internal server error", error });
+  }
+});
+
+
+
+
+
+
 app.post('/bookings', async (req, res) => {
   const getUsers = req.body;
   console.log('user info', getUsers);

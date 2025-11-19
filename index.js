@@ -174,7 +174,6 @@ async function run() {
       const result = await bookingColl.insertOne(getUsers);
       res.send(result);
     });
-
     app.get('/bookings', async(req, res) => {
       const cursor = bookingColl.find({});
       const allValues = await cursor.toArray();

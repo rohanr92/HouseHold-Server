@@ -68,7 +68,6 @@ async function run() {
         if (category && category !== 'All') {
           query.Category = category;
         }
-
    
         if (search) {
           const regex = new RegExp(search, 'i'); 

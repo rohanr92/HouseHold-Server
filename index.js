@@ -4,9 +4,11 @@ const app = express()
 const port = process.env.PORT || 3000
 app.use(cors())
 app.use(express.json());
+require('dotenv').config()
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+// console.log(process.env);
 
-const uri = "mongodb+srv://rohan92:IlovemymotheR92@node-test-server.wj9hxsb.mongodb.net/?appName=Node-Test-Server";
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@node-test-server.wj9hxsb.mongodb.net/?appName=Node-Test-Server`;
 
 const client = new MongoClient(uri, {
   serverApi: {

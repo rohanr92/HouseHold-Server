@@ -64,7 +64,7 @@ async function run() {
           if (maxPrice) query.Price.$lte = parseFloat(maxPrice);
         }
 
-    
+  
         if (category && category !== 'All') {
           query.Category = category;
         }

@@ -10,21 +10,44 @@ const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@node-test-server.wj9hxsb.mongodb.net/?appName=Node-Test-Server`;
 
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
+
+let cachedClient = null;
+
+
+async function getMongoClient() {
+  if (cachedClient) {
+
+    return cachedClient;
   }
-});
+
+
+  const client = new MongoClient(uri, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    }
+  });
+
+  await client.connect();
+
+
+  cachedClient = client;
+
+  return cachedClient;
+}
+
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
+
 async function run() {
   try {
-    await client.connect();
+
+    const client = await getMongoClient();
+
 
     const serviceDB = client.db("serviceDB");
     const serviceColl = serviceDB.collection("serviceColl");
@@ -38,6 +61,7 @@ async function run() {
     const reviewDB = client.db('reviewDB');
     const reviewColl = reviewDB.collection('reviewColl');
 
+    
     app.post('/all-services', async (req, res) => {
       const getUser = req.body;
       const result = await serviceColl.insertOne(getUser);
@@ -262,12 +286,16 @@ async function run() {
       }
     });
 
+
     // await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally { }
+
+
+    app.listen(port, () => {
+        console.log(`Server listening on port ${port}`)
+    });
+  } finally { 
+
+  }
 }
 run().catch(console.dir);
-
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}`)
-});
